@@ -1,4 +1,4 @@
-### Loggr
+# Loggr
 
 This is a Spring Boot-based log ingestion server that supports high-throughput log processing via:
 
