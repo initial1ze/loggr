@@ -72,9 +72,17 @@ Ingest a log entry.
 
 ```json
 {
-  "source": "my-service",
-  "message": "Something happened",
-  "timestamp": "2025-07-19T10:20:00Z"
+  "traceId": "abc123",
+  "level": "ERROR",
+  "message": "Something went wrong",
+  "resourceId": "service-A",
+  "timestamp": "2023-09-15T08:15:00Z",
+  "spanId": "def456",
+  "commit": "a1b2c3d",
+  "metadata": {
+    "env": "prod",
+    "host": "host123"
+  }
 }
 ```
 
@@ -83,7 +91,20 @@ Ingest a log entry.
 ```bash
 curl -X POST http://localhost:8080/ingest \
   -H "Content-Type: application/json" \
-  -d '{"source":"my-service","message":"Something happened","timestamp":"2025-07-19T10:20:00Z"}'
+  -d '{
+    "traceId": "abc123",
+    "level": "INFO",
+    "message": "Something happened",
+    "resourceId": "my-service",
+    "timestamp": "2025-07-19T10:20:00Z",
+    "spanId": "xyz789",
+    "commit": "a1b2c3d",
+    "metadata": {
+      "env": "production",
+      "region": "us-east-1"
+    }
+  }'
+
 ```
 
 ---
@@ -93,12 +114,18 @@ curl -X POST http://localhost:8080/ingest \
 Logs sent to the Kafka topic `logs-topic` will be deserialized into `LogEntry` objects and buffered for MongoDB ingestion.
 
 Make sure the messages match the `LogEntry` structure:
-
 ```json
 {
-  "source": "app-1",
-  "message": "Kafka log message",
-  "timestamp": "2025-07-19T10:30:00Z"
+  "traceId": "string",
+  "level": "string",
+  "message": "string",
+  "resourceId": "string",
+  "timestamp": "ISO 8601 UTC",
+  "spanId": "string",
+  "commit": "string",
+  "metadata": {
+    // Custom metadata specific to your application or environment
+  }
 }
 ```
 
@@ -110,10 +137,16 @@ Each log entry is stored as a document in the `logs` collection:
 
 ```json
 {
-  "_id": "auto-generated",
-  "source": "app-1",
-  "message": "Something happened",
-  "timestamp": "2025-07-19T10:20:00Z"
+  "traceId": "string",
+  "level": "string",
+  "message": "string",
+  "resourceId": "string",
+  "timestamp": "ISO 8601 UTC",
+  "spanId": "string",
+  "commit": "string",
+  "metadata": {
+    // Custom metadata specific to your application or environment
+  }
 }
 ```
 
