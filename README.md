@@ -5,7 +5,7 @@ This is a Spring Boot-based log ingestion server that supports high-throughput l
 - HTTP endpoint for pushing logs
 - Kafka consumer for receiving logs from a topic
 - In-memory buffering with batch processing
-- MongoDB persistence with retry logic
+- MongoDB persistence
 
 ## Features
 
