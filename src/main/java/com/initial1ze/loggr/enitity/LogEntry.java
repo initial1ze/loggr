@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,5 +23,5 @@ public class LogEntry {
     private Instant timestamp;
     private String spanId;
     private String commit;
-    private Metadata metadata;
+    private Map<String, String> metadata;
 }
