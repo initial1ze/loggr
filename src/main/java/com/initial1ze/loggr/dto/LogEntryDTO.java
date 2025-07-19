@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +15,7 @@ public class LogEntryDTO {
     private String level;
     private String message;
     private String resourceId;
-    private String timestamp;
+    private Instant timestamp;
     private String traceId;
     private String spanId;
     private String commit;
