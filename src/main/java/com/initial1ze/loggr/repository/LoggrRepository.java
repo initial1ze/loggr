@@ -7,7 +7,4 @@ import java.time.Instant;
 import java.util.List;
 
 public interface LoggrRepository extends MongoRepository<LogEntry, String> {
-    List<LogEntry> findByResourceIdContainingIgnoreCaseAndLevelContainingIgnoreCaseAndTimestampBetween(
-            String resourceId, String level, Instant start, Instant end
-    );
 }
