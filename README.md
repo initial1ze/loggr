@@ -71,7 +71,7 @@ mvn spring-boot:run
 
 ## HTTP API
 
-### POST `/ingest`
+### POST `/api/ingest`
 
 Ingest a log entry.
 
@@ -96,14 +96,14 @@ Ingest a log entry.
 #### Example with curl:
 
 ```bash
-curl -X POST http://localhost:8080/ingest \
+curl -X POST http://localhost:8080/api/ingest \
   -H "Content-Type: application/json" \
   -d '{"traceId":"abc123","level":"ERROR","message":"Something failed","resourceId":"service-A","timestamp":"2025-07-19T10:20:00Z","spanId":"def456","commit":"abc789","metadata":{"user":"raj","env":"prod"}}'
 ```
 
 ---
 
-### GET `/search`
+### GET `/api/search`
 
 Search logs with dynamic filters, pagination, and sorting.
 
@@ -122,7 +122,7 @@ Search logs with dynamic filters, pagination, and sorting.
 #### Example:
 
 ```bash
-curl "http://localhost:8080/search?resourceId=service-A&level=ERROR&page=0&size=10&sort=timestamp,desc"
+curl "http://localhost:8080/api/search?resourceId=service-A&level=ERROR&page=0&size=10&sort=timestamp,desc"
 ```
 
 #### Example Response:
