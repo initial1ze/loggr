@@ -2,6 +2,8 @@ package com.initial1ze.loggr.service;
 
 import com.initial1ze.loggr.enitity.LogEntry;
 import com.initial1ze.loggr.repository.LoggrRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class LogProcessor {
+    private final Logger LOG = LoggerFactory.getLogger(LogProcessor.class);
 
     private final LogBuffer logBuffer;
     private final LoggrRepository loggrRepository;
@@ -47,7 +50,7 @@ public class LogProcessor {
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Error during batch processing: " + e.getMessage());
+                LOG.error("Error during batch processing: {}", e.getMessage(), e);
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
@@ -55,9 +58,9 @@ public class LogProcessor {
     private void process(List<LogEntry> batch) {
         try {
             loggrRepository.saveAll(batch);
-            System.out.println("Saved batch of size: " + batch.size());
+            LOG.info("Saved batch of size: {}", batch.size());
         } catch (Exception e) {
-            System.err.println("Failed to save logs: " + e.getMessage());
+            LOG.error("Failed to save logs: {}", e.getMessage(), e);
         }
     }
 }
