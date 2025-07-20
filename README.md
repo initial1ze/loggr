@@ -1,21 +1,28 @@
-# Loggr
+## Loggr
 
-This is a Spring Boot-based log ingestion server that supports high-throughput log processing via:
+**Loggr** is a high-performance log ingestion system built using Spring Boot, designed to handle **large volumes of structured logs** efficiently and reliably. It supports multiple input sources, intelligently buffers incoming data, and stores logs persistently in MongoDB using optimized batching.
 
-- HTTP endpoint for pushing logs
-- Kafka consumer for receiving logs from a topic
-- In-memory buffering with batch processing
-- MongoDB persistence
+### Key Capabilities
 
-## Features
+- **Scalable ingestion** via:
+  - RESTful HTTP endpoint
+  - Apache Kafka consumer (ideal for asynchronous, high-throughput pipelines)
 
-- Accepts logs via REST API and Kafka
-- Buffers logs in memory to handle spikes
-- Flushes logs to MongoDB when:
-  - Buffer reaches `MAX_BATCH_SIZE`
-  - OR `MAX_WAIT_TIME_MS` has passed since last flush
+- **In-memory buffering**:
+  - Incoming logs are temporarily held in memory
+  - Helps absorb traffic spikes and avoid overwhelming the database
 
----
+- **Batch processing engine**:
+  - Groups logs into batches based on a configured `MAX_BATCH_SIZE`
+  - Flushes logs to the database either when the batch is full or after a `MAX_WAIT_TIME_MS` interval
+  - Reduces writing overhead and increases throughput by performing fewer I/O operations
+
+- **MongoDB persistence**:
+  - Log entries are stored in a flexible schema within a MongoDB collection
+  - Queries are optimized with the appropriate indexing for efficient retrieval
+
+This architecture ensures that Loggr can **scale horizontally**, maintain **high throughput under load**, and support both **real-time** and **delayed** log ingestion patterns.
+
 
 ## Requirements
 
@@ -102,15 +109,15 @@ Search logs with dynamic filters, pagination, and sorting.
 
 #### Query Parameters:
 
-| Parameter     | Type     | Description                                |
-|---------------|----------|--------------------------------------------|
-| `resourceId`  | `string` | (Optional) Filter by resource ID           |
-| `level`       | `string` | (Optional) Filter by log level (e.g., ERROR, INFO) |
-| `start`       | `datetime` (ISO 8601) | (Optional) Start of time range |
-| `end`         | `datetime` (ISO 8601) | (Optional) End of time range   |
-| `page`        | `int`    | (Optional) Page number (default = 0)       |
-| `size`        | `int`    | (Optional) Page size (default = 20)        |
-| `sort`        | `string` | (Optional) Sort field and direction, e.g. `timestamp,desc` or `level,asc` |
+| Parameter    | Type                  | Description                                                               |
+|--------------|-----------------------|---------------------------------------------------------------------------|
+| `resourceId` | `string`              | (Optional) Filter by resource ID                                          |
+| `level`      | `string`              | (Optional) Filter by log level (e.g., ERROR, INFO)                        |
+| `start`      | `datetime` (ISO 8601) | (Optional) Start of time range                                            |
+| `end`        | `datetime` (ISO 8601) | (Optional) End of time range                                              |
+| `page`       | `int`                 | (Optional) Page number (default = 0)                                      |
+| `size`       | `int`                 | (Optional) Page size (default = 20)                                       |
+| `sort`       | `string`              | (Optional) Sort field and direction, e.g. `timestamp,desc` or `level,asc` |
 
 #### Example:
 
