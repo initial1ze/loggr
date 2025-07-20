@@ -74,14 +74,14 @@ Ingest a log entry.
 {
   "traceId": "abc123",
   "level": "ERROR",
-  "message": "Something went wrong",
+  "message": "Something failed",
   "resourceId": "service-A",
-  "timestamp": "2023-09-15T08:15:00Z",
+  "timestamp": "2025-07-19T10:20:00Z",
   "spanId": "def456",
-  "commit": "a1b2c3d",
+  "commit": "abc789",
   "metadata": {
-    "env": "prod",
-    "host": "host123"
+    "user": "raj",
+    "env": "prod"
   }
 }
 ```
@@ -91,41 +91,60 @@ Ingest a log entry.
 ```bash
 curl -X POST http://localhost:8080/ingest \
   -H "Content-Type: application/json" \
-  -d '{
-    "traceId": "abc123",
-    "level": "INFO",
-    "message": "Something happened",
-    "resourceId": "my-service",
-    "timestamp": "2025-07-19T10:20:00Z",
-    "spanId": "xyz789",
-    "commit": "a1b2c3d",
-    "metadata": {
-      "env": "production",
-      "region": "us-east-1"
-    }
-  }'
-
+  -d '{"traceId":"abc123","level":"ERROR","message":"Something failed","resourceId":"service-A","timestamp":"2025-07-19T10:20:00Z","spanId":"def456","commit":"abc789","metadata":{"user":"raj","env":"prod"}}'
 ```
 
 ---
 
-## Kafka Integration
+### GET `/search`
 
-Logs sent to the Kafka topic `logs-topic` will be deserialized into `LogEntry` objects and buffered for MongoDB ingestion.
+Search logs with dynamic filters, pagination, and sorting.
 
-Make sure the messages match the `LogEntry` structure:
+#### Query Parameters:
+
+| Parameter     | Type     | Description                                |
+|---------------|----------|--------------------------------------------|
+| `resourceId`  | `string` | (Optional) Filter by resource ID           |
+| `level`       | `string` | (Optional) Filter by log level (e.g., ERROR, INFO) |
+| `start`       | `datetime` (ISO 8601) | (Optional) Start of time range |
+| `end`         | `datetime` (ISO 8601) | (Optional) End of time range   |
+| `page`        | `int`    | (Optional) Page number (default = 0)       |
+| `size`        | `int`    | (Optional) Page size (default = 20)        |
+| `sort`        | `string` | (Optional) Sort field and direction, e.g. `timestamp,desc` or `level,asc` |
+
+#### Example:
+
+```bash
+curl "http://localhost:8080/search?resourceId=service-A&level=ERROR&page=0&size=10&sort=timestamp,desc"
+```
+
+#### Example Response:
+
 ```json
 {
-  "traceId": "string",
-  "level": "string",
-  "message": "string",
-  "resourceId": "string",
-  "timestamp": "ISO 8601 UTC",
-  "spanId": "string",
-  "commit": "string",
-  "metadata": {
-    // Custom metadata specific to your application or environment
-  }
+  "content": [
+    {
+      "traceId": "abc123",
+      "level": "ERROR",
+      "message": "Something failed",
+      "resourceId": "service-A",
+      "timestamp": "2025-07-19T10:20:00Z",
+      "spanId": "def456",
+      "commit": "abc789",
+      "metadata": {
+        "user": "raj",
+        "env": "prod"
+      }
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10
+  },
+  "totalElements": 1,
+  "totalPages": 1,
+  "last": true,
+  "first": true
 }
 ```
 
@@ -133,19 +152,21 @@ Make sure the messages match the `LogEntry` structure:
 
 ## MongoDB Schema
 
-Each log entry is stored as a document in the `logs` collection:
+Each log entry is stored as a document in the `logEntry` collection:
 
 ```json
 {
-  "traceId": "string",
-  "level": "string",
-  "message": "string",
-  "resourceId": "string",
-  "timestamp": "ISO 8601 UTC",
-  "spanId": "string",
-  "commit": "string",
+  "_id": "auto-generated",
+  "traceId": "abc123",
+  "level": "ERROR",
+  "message": "Something failed",
+  "resourceId": "service-A",
+  "timestamp": "2025-07-19T10:20:00Z",
+  "spanId": "def456",
+  "commit": "abc789",
   "metadata": {
-    // Custom metadata specific to your application or environment
+    "user": "raj",
+    "env": "prod"
   }
 }
 ```
@@ -156,12 +177,10 @@ Each log entry is stored as a document in the `logs` collection:
 
 You can tune batching behavior via constants in `LogProcessor` from `application.properties`.
 
+---
 
 ## TODO
 
-- Implement log search by text, source, and time range
-- Add pagination and sorting to log retrieval API
-- Create endpoints for filtering logs by severity level
 - Add support for exporting logs (e.g., to CSV)
 - Implement indexing on MongoDB fields for better query performance
 - Integrate with frontend dashboard for visualizing logs
