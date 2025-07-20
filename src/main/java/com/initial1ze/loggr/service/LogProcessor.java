@@ -2,6 +2,8 @@ package com.initial1ze.loggr.service;
 
 import com.initial1ze.loggr.enitity.LogEntry;
 import com.initial1ze.loggr.repository.LoggrRepository;
+import com.initial1ze.loggr.spring.MetricsService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,21 +16,24 @@ import java.util.concurrent.TimeUnit;
 
 
 @Component
+@Slf4j
 public class LogProcessor {
     private final Logger LOG = LoggerFactory.getLogger(LogProcessor.class);
 
     private final LogBuffer logBuffer;
     private final LoggrRepository loggrRepository;
+    private final MetricsService metricsService;
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
     private long lastFlushTime = System.currentTimeMillis();
 
     private final Integer MAX_BATCH_SIZE;
     private final Long MAX_WAIT_TIME_MS;
 
-    public LogProcessor(LogBuffer logBuffer, LoggrRepository loggrRepository,
+    public LogProcessor(LogBuffer logBuffer, LoggrRepository loggrRepository, MetricsService metricsService,
                         @Value("${loggr.bufferSize}") Integer maxBatchSize, @Value("${loggr.flushDelay}") Long maxWaitTimeMs) {
         this.logBuffer = logBuffer;
         this.loggrRepository = loggrRepository;
+        this.metricsService = metricsService;
         this.MAX_BATCH_SIZE = maxBatchSize;
         this.MAX_WAIT_TIME_MS = maxWaitTimeMs;
         startProcessing();
@@ -58,6 +63,7 @@ public class LogProcessor {
     private void process(List<LogEntry> batch) {
         try {
             loggrRepository.saveAll(batch);
+            metricsService.incrementBy(batch.size());
             LOG.info("Saved batch of size: {}", batch.size());
         } catch (Exception e) {
             LOG.error("Failed to save logs: {}", e.getMessage(), e);

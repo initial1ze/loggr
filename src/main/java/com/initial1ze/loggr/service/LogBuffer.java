@@ -1,6 +1,5 @@
 package com.initial1ze.loggr.service;
 
-import com.initial1ze.loggr.dto.LogEntryDTO;
 import com.initial1ze.loggr.enitity.LogEntry;
 import org.springframework.stereotype.Component;
 

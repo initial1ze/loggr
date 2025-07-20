@@ -3,6 +3,7 @@ package com.initial1ze.loggr.service;
 import com.initial1ze.loggr.dto.LogSearchRequestDTO;
 import com.initial1ze.loggr.enitity.LogEntry;
 import com.initial1ze.loggr.repository.LoggrRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class LoggrService {
     private final Logger LOG = LoggerFactory.getLogger(LoggrService.class);
 

@@ -186,6 +186,46 @@ You can tune batching behavior via constants in `LogProcessor` from `application
 
 ---
 
+## Metrics & Monitoring
+
+This application exposes internal metrics using [Micrometer](https://micrometer.io/) and integrates with Prometheus and Grafana for real-time monitoring of log ingestion and system health.
+
+### Exposed Metrics
+
+Metrics are available at the `/actuator/prometheus` endpoint. Key metrics include:
+
+- `loggr_logs_ingested`: Custom counter for number of logs ingested
+- JVM metrics (memory usage, threads, GC)
+- HTTP request metrics
+- Kafka consumer metrics
+
+---
+
+## Prometheus & Grafana Setup
+
+Run `docker-compose.yml` to run Prometheus and Grafana in docker.
+
+### Viewing Metrics in Grafana
+
+Visit [http://localhost:3000](http://localhost:3000) (default Grafana port)
+
+**Login with default credentials:**
+
+- Username: `admin`
+- Password: `admin`
+
+**Steps:**
+
+1. Add Prometheus as a data source: `http://prometheus:9090`
+2. Create dashboards or import pre-built dashboards for:
+   - JVM metrics
+   - Kafka monitoring
+   - Logs Ingesting Monitoring
+   - Spring Boot application metrics
+3. Use the `loggr_logs_ingested` metric to visualize the log ingestion rate over time.
+
+---
+
 ## TODO
 
 - Add support for exporting logs (e.g., to CSV)

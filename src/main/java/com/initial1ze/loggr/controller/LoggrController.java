@@ -4,6 +4,7 @@ import com.initial1ze.loggr.dto.LogEntryDTO;
 import com.initial1ze.loggr.dto.LogSearchRequestDTO;
 import com.initial1ze.loggr.enitity.LogEntry;
 import com.initial1ze.loggr.service.LoggrService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/")
+@Slf4j
 public class LoggrController {
     private final Logger LOG = LoggerFactory.getLogger(LoggrController.class);
 
